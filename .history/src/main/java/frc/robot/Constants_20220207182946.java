@@ -57,7 +57,7 @@ public final class Constants {
         //constants for getting distance traveled by motors
         public static final double kTicksPerRevolution = 2048; //RANDOM VALUES
         public static final double kGearRatio = 12.78;
-        public static final double kwheelCircumference = 6*Math.PI; // inches
+        public static final double kwheelCircumference = 6*Math.PI;
 
         public static final double kP = 1.6498;
         public static final double kI = 0;

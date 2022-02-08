@@ -1,7 +1,6 @@
 package frc.robot.util;
 
 
-
 import frc.robot.Constants;
 
 public class MathUtils {
@@ -60,11 +59,6 @@ public class MathUtils {
         double wheelRotations = rotations / gearRatio;
         double meters = wheelRotations * wheelCircumference;
         return meters;
-    }
-    public static double metersToTicks(double meters){
-        double rotations = meters  / (2*Math.PI* inchesToMeters(Constants.Drivetrain.kwheelCircumference)) * (Constants.Drivetrain.kGearRatio);
-        return rotations * 2048;
-        
     }
 
     /** 

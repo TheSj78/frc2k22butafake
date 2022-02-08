@@ -112,7 +112,7 @@ public class Drivetrain extends SubsystemBase {
         leftFollower.setSelectedSensorPosition(0);
         rightMaster.setSelectedSensorPosition(0);
         rightFollower.setSelectedSensorPosition(0);
-
+        SmartDashboard.putData("field", field);
         gyro.reset();
     }
 
@@ -194,6 +194,21 @@ public class Drivetrain extends SubsystemBase {
         leftFollower.set(ControlMode.PercentOutput, left);
         rightFollower.set(ControlMode.PercentOutput, right);
         rightMaster.set(ControlMode.PercentOutput, right);
+    }
+    /**
+     * 
+     * @param ticksPer100ms
+     */
+    public void setDrivetrainVelocity(double leftMetersPerSecond, double rightMetersPerSecond){
+        double leftMetersPer100ms = leftMetersPerSecond / 10;
+        double rightMetersPer100ms = rightMetersPerSecond / 10;
+        double leftTicks = MathUtils.metersToTicks(leftMetersPer100ms);
+        double rightTicks = MathUtils.metersToTicks(rightMetersPer100ms);
+        
+        leftMaster.set(ControlMode.Velocity, leftTicks);
+        leftFollower.set(ControlMode.Velocity, leftTicks);
+        rightMaster.set(ControlMode.Velocity, rightTicks);
+        rightFollower.set(ControlMode.Velocity, rightTicks);
     }
 
     /**
@@ -340,6 +355,9 @@ public class Drivetrain extends SubsystemBase {
         return pose;
     }
 
+    public Field2d getField() {
+        return field;
+    }
     /** 
      * Resets the gyro 
      */
@@ -353,6 +371,14 @@ public class Drivetrain extends SubsystemBase {
     public void resetOdometry() {
         resetEncoders();
         odometry.update(new Rotation2d(), 0, 0);
+    }
+
+    /** 
+     * Reset the odometry and the encoders
+     */
+    public void setOdometry(Pose2d newPose) {
+        resetEncoders();
+        odometry.resetPosition(pose, new Rotation2d(0));
     }
 
     /** 
