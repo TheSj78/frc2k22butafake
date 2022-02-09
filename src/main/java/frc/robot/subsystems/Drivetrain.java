@@ -196,7 +196,12 @@ public class Drivetrain extends SubsystemBase {
         rightFollower.set(ControlMode.PercentOutput, right);
         rightMaster.set(ControlMode.PercentOutput, right);
     }
-    
+    /**
+     * Used in auton
+     * 
+     * @param leftMetersPerSecond - speed of the left side
+     * @param rightMetersPerSecond - speed of right side
+     */
     public void setDrivetrainVelocity(double leftMetersPerSecond, double rightMetersPerSecond){
         double leftRadiansPerSec = MathUtils.metersToRadians(leftMetersPerSecond, Constants.Drivetrain.kwheelCircumference);
         double rightRadiansPerSec = MathUtils.metersToRadians(rightMetersPerSecond, Constants.Drivetrain.kwheelCircumference);
@@ -353,7 +358,10 @@ public class Drivetrain extends SubsystemBase {
     public Pose2d getPose() {
         return pose;
     }
-
+    /**
+     * Returns the field
+     * @return the robot field, shown in smartdashboard.
+     */
     public Field2d getField() {
         return field;
     }

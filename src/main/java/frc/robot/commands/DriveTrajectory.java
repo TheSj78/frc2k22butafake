@@ -79,7 +79,7 @@ public class DriveTrajectory extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //stop command after trajectory is supposed to end
+    //stop running trajectory after the total time its supposed to take the trajectory will pass.
     return timer.hasElapsed(traj.getTotalTimeSeconds());
   }
 }
