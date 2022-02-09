@@ -65,7 +65,7 @@ public class DriveTrajectory extends CommandBase {
     DifferentialDriveWheelSpeeds wheelSpeeds =
         drivetrain.getKinematics().toWheelSpeeds(chassisSpeeds);
       
-    //set the drivetrain speeds from the current trajectory state
+    //set the drivetrain speeds from the current trajectory state 
     drivetrain.setDrivetrainVelocity(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
   }
 
