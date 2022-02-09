@@ -153,8 +153,8 @@ public class Drivetrain extends SubsystemBase {
 
         double scaling_factor = Math.max(1.0, Math.max(Math.abs(left), Math.abs(right)));
         // DO NOT DELETE WE DON'T KNOW WHY BUT THIS MAKES IT WORK3
-        SmartDashboard.putNumber("left", left);
-        SmartDashboard.putNumber("right", right);
+        // SmartDashboard.putNumber("left", left);
+        // SmartDashboard.putNumber("right", right);
         setDrivetrainMotorSpeed(left / scaling_factor, right / scaling_factor);
     }
 
