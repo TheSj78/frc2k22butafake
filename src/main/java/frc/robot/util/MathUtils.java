@@ -61,10 +61,16 @@ public class MathUtils {
         double meters = wheelRotations * wheelCircumference;
         return meters;
     }
-    public static double metersToTicks(double meters){
-        double rotations = meters  / (2*Math.PI* inchesToMeters(Constants.Drivetrain.kwheelCircumference)) * (Constants.Drivetrain.kGearRatio);
-        return rotations * 2048;
+    // public static double metersToTicks(double meters){
+
+    //     double rotations = meters  / (2*Math.PI* inchesToMeters(Constants.Drivetrain.kwheelCircumference)) * (Constants.Drivetrain.kGearRatio);
+    //     return rotations * 2048;
         
+    // }
+
+    public static double metersToRadians(double wheelCircumfrence, double meters){
+        double rotations = meters / wheelCircumfrence;
+        return rotations * 2 * Math.PI;
     }
 
     /** 

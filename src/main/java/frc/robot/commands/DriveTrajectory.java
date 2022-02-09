@@ -25,7 +25,7 @@ public class DriveTrajectory extends CommandBase {
   Trajectory traj;
   RamseteController ramseteController = new RamseteController();
   Timer timer = new Timer();
-  /** Creates a new DriveTrajectory. */
+  /** Drives on a drivetrain through a trajectory */
   public DriveTrajectory(Drivetrain dt, Trajectory _traj) {
     drivetrain = dt;
     traj = _traj;
@@ -33,7 +33,7 @@ public class DriveTrajectory extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
-  /** Creates a new DriveTrajectory. */
+  /** Run Auton with default command */
   public DriveTrajectory(Drivetrain dt) {
    
     this(dt, TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)), 
@@ -46,7 +46,9 @@ public class DriveTrajectory extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    //set current pose to begeinning of trajectory
     drivetrain.setOdometry(traj.getInitialPose());
+    //set trajectory on field
     drivetrain.getField().getObject("Traj").setTrajectory(traj);
     
     timer.reset();
@@ -56,26 +58,29 @@ public class DriveTrajectory extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    //load the speed of each wheel at the current timestamp
     State setpoint = traj.sample(timer.get());
-
-    
     ChassisSpeeds chassisSpeeds =
         ramseteController.calculate(drivetrain.getPose(), setpoint);
     DifferentialDriveWheelSpeeds wheelSpeeds =
         drivetrain.getKinematics().toWheelSpeeds(chassisSpeeds);
       
-    
+    //set the drivetrain speeds from the current trajectory state
     drivetrain.setDrivetrainVelocity(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    drivetrain.stopDrivetrainMotors();
+    timer.stop();
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    //stop command after trajectory is supposed to end
+    return timer.hasElapsed(traj.getTotalTimeSeconds());
   }
 }
 

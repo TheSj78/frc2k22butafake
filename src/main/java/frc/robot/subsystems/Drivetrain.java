@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -195,20 +196,18 @@ public class Drivetrain extends SubsystemBase {
         rightFollower.set(ControlMode.PercentOutput, right);
         rightMaster.set(ControlMode.PercentOutput, right);
     }
-    /**
-     * 
-     * @param ticksPer100ms
-     */
+    
     public void setDrivetrainVelocity(double leftMetersPerSecond, double rightMetersPerSecond){
-        double leftMetersPer100ms = leftMetersPerSecond / 10;
-        double rightMetersPer100ms = rightMetersPerSecond / 10;
-        double leftTicks = MathUtils.metersToTicks(leftMetersPer100ms);
-        double rightTicks = MathUtils.metersToTicks(rightMetersPer100ms);
+        double leftRadiansPerSec = MathUtils.metersToRadians(leftMetersPerSecond, Constants.Drivetrain.kwheelCircumference);
+        double rightRadiansPerSec = MathUtils.metersToRadians(rightMetersPerSecond, Constants.Drivetrain.kwheelCircumference);
+
+        double leftVolts = feedforward.calculate(leftRadiansPerSec);
+        double rightVolts = feedforward.calculate(rightRadiansPerSec);
         
-        leftMaster.set(ControlMode.Velocity, leftTicks);
-        leftFollower.set(ControlMode.Velocity, leftTicks);
-        rightMaster.set(ControlMode.Velocity, rightTicks);
-        rightFollower.set(ControlMode.Velocity, rightTicks);
+        leftMaster.set(ControlMode.PercentOutput, leftVolts / 12.0);
+        leftFollower.set(ControlMode.PercentOutput, leftVolts / 12.0);
+        rightMaster.set(ControlMode.PercentOutput, rightVolts / 12.0);
+        rightFollower.set(ControlMode.PercentOutput, rightVolts / 12.0);
     }
 
     /**
