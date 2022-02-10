@@ -16,7 +16,6 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Drivetrain;
 
@@ -26,28 +25,76 @@ public class AutonPath6 extends SequentialCommandGroup {
   private Drivetrain drivetrain;
   public AutonPath6(Drivetrain dr) 
   {
+    int delay = 5;
     drivetrain = dr;
+    
     addCommands(
-      new MoveBack().withTimeout(5)
+      moveFront().withTimeout(delay),
+      moveBack().withTimeout(delay),
+      moveFrontWithPathPlanner().withTimeout(delay),
+      moveBackWithPathPlanner().withTimeout(delay),
+      rotateAndMove().withTimeout(delay)
     );
   }
   @Override
   public void execute() {
-    // TODO Auto-generated method stub
     super.execute();
     SmartDashboard.putString("ABTAN", "abbyton");
   }
+
   @Override
   public void end(boolean interrupted) {
-      // TODO Auto-generated method stub
       super.end(interrupted);
-
       SmartDashboard.putString("Auton", "autpoonaononaoanoaoa");
   }
 
-  public Command MoveBack()
+  public Command moveBack()
   {
-    Trajectory tr = TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d()), List.of(new Translation2d(0, 1), new Translation2d(0,2)), new Pose2d(0, 3, new Rotation2d()), new TrajectoryConfig(10, 2));//PathPlanner.loadPath("TryPath", 4, 4);
+    Trajectory tr = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, new Rotation2d(0)),
+      List.of(
+        new Translation2d(0, -1),
+        new Translation2d(0, -2),
+        new Translation2d(0, -3)
+      ),
+      new Pose2d(0, -4, new Rotation2d(0)),
+      new TrajectoryConfig(8, 2)
+    );
+
+    return drivetrain.getRamseteCommand(tr);
+  }
+
+  public Command moveFront()
+  {
+    Trajectory tr = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, new Rotation2d(0)), 
+      List.of(
+        new Translation2d(0, 1),
+        new Translation2d(0, 2),
+        new Translation2d(0, 3)
+      ), 
+      new Pose2d(0, 4, new Rotation2d(0)), 
+      new TrajectoryConfig(8, 2)
+    );
+
+    return drivetrain.getRamseteCommand(tr);
+  }
+
+  public Command moveFrontWithPathPlanner()
+  {
+    Trajectory tr = PathPlanner.loadPath("MoveFrontPath", 8, 2);
+    return drivetrain.getRamseteCommand(tr);
+  }
+
+  public Command moveBackWithPathPlanner()
+  {
+    Trajectory tr = PathPlanner.loadPath("MoveBackPath", 8, 2);
+    return drivetrain.getRamseteCommand(tr);
+  }
+
+  public Command rotateAndMove()
+  {
+    Trajectory tr = PathPlanner.loadPath("RotateAndMove", 8, 2);
     return drivetrain.getRamseteCommand(tr);
   }
 }

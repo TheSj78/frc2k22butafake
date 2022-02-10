@@ -269,7 +269,8 @@ public class Drivetrain extends SubsystemBase {
                 ticks,
                 Constants.Drivetrain.kTicksPerRevolution,
                 Constants.Drivetrain.kGearRatio,
-                Constants.Drivetrain.kwheelCircumference);
+                Constants.Drivetrain.kwheelCircumference
+            );
     }
 
     /**
