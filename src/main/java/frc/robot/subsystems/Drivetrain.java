@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -112,7 +113,7 @@ public class Drivetrain extends SubsystemBase {
         leftFollower.setSelectedSensorPosition(0);
         rightMaster.setSelectedSensorPosition(0);
         rightFollower.setSelectedSensorPosition(0);
-
+        SmartDashboard.putData("field", field);
         gyro.reset();
     }
 
@@ -152,8 +153,8 @@ public class Drivetrain extends SubsystemBase {
 
         double scaling_factor = Math.max(1.0, Math.max(Math.abs(left), Math.abs(right)));
         // DO NOT DELETE WE DON'T KNOW WHY BUT THIS MAKES IT WORK3
-        SmartDashboard.putNumber("left", left);
-        SmartDashboard.putNumber("right", right);
+        // SmartDashboard.putNumber("left", left);
+        // SmartDashboard.putNumber("right", right);
         setDrivetrainMotorSpeed(left / scaling_factor, right / scaling_factor);
     }
 
@@ -194,6 +195,24 @@ public class Drivetrain extends SubsystemBase {
         leftFollower.set(ControlMode.PercentOutput, left);
         rightFollower.set(ControlMode.PercentOutput, right);
         rightMaster.set(ControlMode.PercentOutput, right);
+    }
+    /**
+     * Used in auton
+     * 
+     * @param leftMetersPerSecond - speed of the left side
+     * @param rightMetersPerSecond - speed of right side
+     */
+    public void setDrivetrainVelocity(double leftMetersPerSecond, double rightMetersPerSecond){
+        double leftRadiansPerSec = MathUtils.metersToRadians(leftMetersPerSecond, Constants.Drivetrain.kwheelCircumference);
+        double rightRadiansPerSec = MathUtils.metersToRadians(rightMetersPerSecond, Constants.Drivetrain.kwheelCircumference);
+
+        double leftVolts = feedforward.calculate(leftRadiansPerSec);
+        double rightVolts = feedforward.calculate(rightRadiansPerSec);
+        
+        leftMaster.set(ControlMode.PercentOutput, leftVolts / 12.0);
+        leftFollower.set(ControlMode.PercentOutput, leftVolts / 12.0);
+        rightMaster.set(ControlMode.PercentOutput, rightVolts / 12.0);
+        rightFollower.set(ControlMode.PercentOutput, rightVolts / 12.0);
     }
 
     /**
@@ -340,7 +359,13 @@ public class Drivetrain extends SubsystemBase {
     public Pose2d getPose() {
         return pose;
     }
-
+    /**
+     * Returns the field
+     * @return the robot field, shown in smartdashboard.
+     */
+    public Field2d getField() {
+        return field;
+    }
     /** 
      * Resets the gyro 
      */
@@ -354,6 +379,14 @@ public class Drivetrain extends SubsystemBase {
     public void resetOdometry() {
         resetEncoders();
         odometry.update(new Rotation2d(), 0, 0);
+    }
+
+    /** 
+     * Reset the odometry and the encoders
+     */
+    public void setOdometry(Pose2d newPose) {
+        resetEncoders();
+        odometry.resetPosition(pose, new Rotation2d(0));
     }
 
     /** 
